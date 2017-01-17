@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">WebViewApp</string>
+    <string name="drawer_open">侧滑开启</string>
+    <string name="drawer_close">侧滑关闭</string>
+    <string name="tab_mine">我的</string>
+    <string name="unLogin">未登录</string>
+    <string name="my_message">消息</string>
+    <string name="my_team">团队</string>
+    <string name="mine">我的</string>
+
 </resources>

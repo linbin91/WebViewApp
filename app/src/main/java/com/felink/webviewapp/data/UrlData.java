@@ -8,4 +8,5 @@ package com.felink.webviewapp.data;
 
 public class UrlData {
     public static final String GET_TAB_URL = "https://www.vogerp.com/uimaster/ajaxservice?_ajaxUserEvent=webservice&_serviceName=org.shaolin.vogerp.commonmodel.page.AjaxService.mobileBottomFunctionList&_appclient=andriod";
+    public static final String MODULE_WEB_URL = "https://www.vogerp.com/uimaster/webflow.do?https://www.vogerp.com/uimaster/webflow.do?";
 }

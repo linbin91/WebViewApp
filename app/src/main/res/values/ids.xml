@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="main_tab"></item>
+    <item type="id" name="order_tab"></item>
+    <item type="id" name="product_tab"></item>
+    <item type="id" name="mine_tab"></item>
+
+
+</resources>
