@@ -1,5 +1,7 @@
 package com.felink.webviewapp.base;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -44,12 +46,11 @@ public class BasePresenterImpl<T extends  BaseView> extends Callback<String> imp
 
     @Override
     public void onError(Call call, Exception e) {
-
+        Log.e("linbin","Exception ="+ e.toString());
     }
 
     @Override
     public void onResponse(String response) {
-
     }
 
     public  <V> ArrayList<V> jsonToArrayList(String json, Class<V> clazz)

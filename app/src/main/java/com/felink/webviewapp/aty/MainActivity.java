@@ -1,5 +1,6 @@
-package com.felink.webviewapp;
+package com.felink.webviewapp.aty;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +17,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.felink.webviewapp.R;
 import com.felink.webviewapp.base.BaseFragment;
 import com.felink.webviewapp.bean.MainModuleBean;
 import com.felink.webviewapp.data.UrlData;
@@ -67,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements IMainModuleView{
         //设置显示logo
         actionBar.setDisplayUseLogoEnabled(false);
 ////设置actionbar背景
-//        Drawable background =getResources().getDrawable(R.drawable.top_bar_background);
-//        actionBar.setBackgroundDrawable(background);
+        Drawable background =getResources().getDrawable(R.color.toolbar_color);
+        actionBar.setBackgroundDrawable(background);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close);
