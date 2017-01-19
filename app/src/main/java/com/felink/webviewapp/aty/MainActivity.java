@@ -1,12 +1,10 @@
 package com.felink.webviewapp.aty;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -18,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.felink.webviewapp.R;
+import com.felink.webviewapp.base.BaseActivity;
 import com.felink.webviewapp.base.BaseFragment;
 import com.felink.webviewapp.bean.MainModuleBean;
 import com.felink.webviewapp.data.UrlData;
@@ -31,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements IMainModuleView{
+public class MainActivity extends BaseActivity implements IMainModuleView{
 
     private ListView listView;
     private RadioGroup tabs;
@@ -46,36 +45,23 @@ public class MainActivity extends AppCompatActivity implements IMainModuleView{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         initView();
         MainModulePresenterImpl presenter = new MainModulePresenterImpl(this, UrlData.GET_TAB_URL);
-
     }
 
+    @Override
+    protected int getLayoutId() {
+        return R.layout.main_layout;
+    }
 
-    private void initView() {
+    protected void initView() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
-//        mDrawerLayout.openDrawer(Gravity.RIGHT);
-        tabs = (RadioGroup) findViewById(R.id.tabs);
-        listView = (ListView) findViewById(R.id.left_drawer);
-        listView.setAdapter(new ArrayAdapter<String>(this,R.layout.drawer_list_item,datas));
-
-        //取得ActionBar
-        actionBar = getSupportActionBar();
-//设置不显示标题
-        actionBar.setDisplayShowTitleEnabled(true);
-        //设置返回键可用
-        actionBar.setDisplayShowHomeEnabled(true);
-        //设置显示logo
-        actionBar.setDisplayUseLogoEnabled(false);
-////设置actionbar背景
-        Drawable background =getResources().getDrawable(R.color.toolbar_color);
-        actionBar.setBackgroundDrawable(background);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
         mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close);
         mDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        tabs = (RadioGroup) findViewById(R.id.tabs);
+        listView = (ListView) findViewById(R.id.left_drawer);
+        listView.setAdapter(new ArrayAdapter<String>(this,R.layout.drawer_list_item,datas));
     }
 
     @Override
@@ -120,15 +106,17 @@ public class MainActivity extends AppCompatActivity implements IMainModuleView{
                     radioButton.setId(R.id.order_tab);
                     radioButton.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.tab_icon_func), null, null);
                 }
+                radioButton.setPadding(0,0,0,0);
                 radioButton.setButtonDrawable(android.R.color.transparent);
                 RadioGroup.LayoutParams lp = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
-                radioButton.setGravity(Gravity.CENTER);
+                radioButton.setGravity(Gravity.CENTER_HORIZONTAL);
                 radioButton.setText(bean.name);
                 tabs.addView(radioButton, lp);
             }
         }
         if (moduleBeans.size() > 0) {
             RadioButton radioButton = new RadioButton(this);
+            radioButton.setPadding(0,0,0,0);
             radioButton.setId(R.id.mine_tab);
             radioButton.setButtonDrawable(android.R.color.transparent);
             radioButton.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.tab_icon_me), null, null);
@@ -156,19 +144,19 @@ public class MainActivity extends AppCompatActivity implements IMainModuleView{
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                 switch (checkedId) {
                     case R.id.main_tab:
-                        actionBar.setTitle(titleMap.get(R.id.main_tab));
+                        setToolBarTitle(titleMap.get(R.id.main_tab));
                         showFragment(fragmentMap.get(R.id.main_tab));
                         break;
                     case R.id.order_tab:
-                        actionBar.setTitle(titleMap.get(R.id.order_tab));
+                        setToolBarTitle(titleMap.get(R.id.order_tab));
                         showFragment(fragmentMap.get(R.id.order_tab));
                         break;
                     case R.id.product_tab:
-                        actionBar.setTitle(titleMap.get(R.id.product_tab));
+                        setToolBarTitle(titleMap.get(R.id.product_tab));
                         showFragment(fragmentMap.get(R.id.product_tab));
                         break;
                     case R.id.mine_tab:
-                        actionBar.setTitle(getResources().getString(R.string.mine));
+                        setToolBarTitle(getResources().getString(R.string.mine));
                         showFragment(MineFragment.getInstance());
                         break;
                     default:
