@@ -1,5 +1,6 @@
 package com.felink.webviewapp.aty;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -7,15 +8,19 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.felink.webviewapp.R;
+import com.felink.webviewapp.adpter.MenuAdapter;
 import com.felink.webviewapp.base.BaseActivity;
 import com.felink.webviewapp.base.BaseFragment;
 import com.felink.webviewapp.bean.MainModuleBean;
@@ -24,29 +29,36 @@ import com.felink.webviewapp.fragment.MineFragment;
 import com.felink.webviewapp.fragment.WebFragment;
 import com.felink.webviewapp.utils.UrlParse;
 import com.felink.webviewapp.viewmodule.impl.MainModulePresenterImpl;
+import com.felink.webviewapp.viewmodule.impl.MenuItemPresenterImpl;
 import com.felink.webviewapp.viewmodule.inter.IMainModuleView;
+import com.felink.webviewapp.viewmodule.inter.IMenuView;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends BaseActivity implements IMainModuleView{
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+import de.greenrobot.event.ThreadMode;
+
+public class MainActivity extends BaseActivity implements IMainModuleView,IMenuView{
 
     private ListView listView;
     private RadioGroup tabs;
     private DrawerLayout mDrawerLayout;
-    private String [] datas = {"基本信息","产品管理"};
     private ActionBar actionBar;
     private ActionBarDrawerToggle mDrawerToggle;
     private Map<Integer,BaseFragment> fragmentMap;
     private Map<Integer,String> titleMap;
     private BaseFragment mCurrentFragment;
     private List<MainModuleBean> moduleBeans;
+    private long mExitTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
         MainModulePresenterImpl presenter = new MainModulePresenterImpl(this, UrlData.GET_TAB_URL);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -61,7 +73,7 @@ public class MainActivity extends BaseActivity implements IMainModuleView{
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         tabs = (RadioGroup) findViewById(R.id.tabs);
         listView = (ListView) findViewById(R.id.left_drawer);
-        listView.setAdapter(new ArrayAdapter<String>(this,R.layout.drawer_list_item,datas));
+
     }
 
     @Override
@@ -134,6 +146,8 @@ public class MainActivity extends BaseActivity implements IMainModuleView{
         urlParse.putValue("_chunkname",bean._chunkname);
         urlParse.putValue("_page",bean._page);
         urlParse.putValue("_framename",bean._framename);
+        urlParse.putValue("_appclient","android");
+
         return urlParse.toString();
     }
 
@@ -196,4 +210,48 @@ public class MainActivity extends BaseActivity implements IMainModuleView{
     public void hideProgress() {
 
     }
+
+    @Subscribe(threadMode = ThreadMode.BackgroundThread)
+    public void getMenuItems(com.felink.webviewapp.bean.MenuItem item) {
+        MenuItemPresenterImpl presenter = new MenuItemPresenterImpl(this);
+    }
+
+    @Override
+    public void showMenuList(final List<com.felink.webviewapp.bean.MenuItem> items) {
+        MenuAdapter adapter = new MenuAdapter(this,items);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+                StringBuilder sb = new StringBuilder(UrlData.BASE_URL);
+                sb.append(items.get(position).a_attr.href);
+                intent.putExtra("url",sb.toString());
+                intent.putExtra("title",items.get(position).text);
+                startActivity(intent);
+                mDrawerLayout.closeDrawers();
+            }
+        });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
+            mDrawerLayout.closeDrawers();
+            return true;
+        }
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {//
+                // 如果两次按键时间间隔大于2000毫秒，则不退出
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();// 更新mExitTime
+            } else {
+                System.exit(0);// 否则退出程序
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+
+    }
+
 }

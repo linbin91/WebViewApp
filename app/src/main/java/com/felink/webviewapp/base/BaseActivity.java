@@ -7,6 +7,10 @@ import android.support.v7.widget.Toolbar;
 
 import com.felink.webviewapp.R;
 
+import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+
 /**
  * Created by linbin_dian91 on 2016/3/17.
  */
@@ -19,8 +23,8 @@ public abstract class BaseActivity<T extends  BasePresenter> extends AppCompatAc
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+        ButterKnife.bind(this);
         initToolBar();
-
     }
 
     protected void initToolBar(){
@@ -44,6 +48,7 @@ public abstract class BaseActivity<T extends  BasePresenter> extends AppCompatAc
         setSupportActionBar(toolbar);
     }
 
+    @Subscribe()
 
     @Override
     public void toast(String msg) {
@@ -68,11 +73,13 @@ public abstract class BaseActivity<T extends  BasePresenter> extends AppCompatAc
          }
      }
 
+
      @Override
      protected void onDestroy() {
-      super.onDestroy();
+         super.onDestroy();
          if (mPresenter != null) {
              mPresenter.onDestroy();
          }
+         EventBus.getDefault().unregister(this);
      }
 }

@@ -13,14 +13,16 @@
         android:name=".aty.MyApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".aty.MainActivity">
+        <activity android:name=".aty.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".aty.LoginActivity"/>
+        <activity android:name=".aty.LoginActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".aty.RegisterActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".aty.WebViewActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

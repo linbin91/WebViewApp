@@ -24,4 +24,6 @@
     <color name="black_50">#7f000000</color>
     <color name="login_activity_bg">#fafafa</color>
     <color name="toolbar_color">#0b751e</color>
+    <color name="menu_bg">#f6f6f6</color>
+    <color name="title_bar_bg">#40aa52</color>
 </resources>

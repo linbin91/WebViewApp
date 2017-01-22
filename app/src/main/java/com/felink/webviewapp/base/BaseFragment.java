@@ -89,7 +89,6 @@ public  class BaseFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         if (mView instanceof ViewGroup) {
             ((ViewGroup) mView).removeAllViewsInLayout();
         }

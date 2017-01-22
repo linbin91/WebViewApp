@@ -11,4 +11,5 @@ public class MainModuleBean {
     public String name;
     public String _nodename;
     public String _chunkname;
+    public String icon;
 }
