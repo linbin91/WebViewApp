@@ -1,6 +1,8 @@
 package com.felink.webviewapp.aty;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -59,6 +61,7 @@ public class MainActivity extends BaseActivity implements IMainModuleView,IMenuV
         initView();
         MainModulePresenterImpl presenter = new MainModulePresenterImpl(this, UrlData.GET_TAB_URL);
         EventBus.getDefault().register(this);
+        MenuItemPresenterImpl presenter1 = new MenuItemPresenterImpl(this);
     }
 
     @Override
@@ -123,6 +126,11 @@ public class MainActivity extends BaseActivity implements IMainModuleView,IMenuV
                 RadioGroup.LayoutParams lp = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
                 radioButton.setGravity(Gravity.CENTER_HORIZONTAL);
                 radioButton.setText(bean.name);
+                Resources resource = (Resources) getBaseContext().getResources();
+                ColorStateList csl = (ColorStateList) resource.getColorStateList(R.color.tab_text_select);
+                if (csl != null) {
+                    radioButton.setTextColor(csl);
+                }
                 tabs.addView(radioButton, lp);
             }
         }
@@ -135,6 +143,11 @@ public class MainActivity extends BaseActivity implements IMainModuleView,IMenuV
             RadioGroup.LayoutParams lp = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
             radioButton.setText(getResources().getString(R.string.mine));
             radioButton.setGravity(Gravity.CENTER);
+            Resources resource = (Resources) getBaseContext().getResources();
+            ColorStateList csl = (ColorStateList) resource.getColorStateList(R.color.tab_text_select);
+            if (csl != null) {
+                radioButton.setTextColor(csl);
+            }
             tabs.addView(radioButton, lp);
         }
         setListener();
