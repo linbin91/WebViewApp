@@ -7,7 +7,11 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class LoginBean {
+    public String orgId;
+    public String userId;
     public String orgName;
+    public String city;
+    public String locale;
     public String userName;
     public String userIcon;
     @SerializedName("verifyCode.error")

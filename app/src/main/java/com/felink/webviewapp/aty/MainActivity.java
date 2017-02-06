@@ -25,6 +25,7 @@ import com.felink.webviewapp.R;
 import com.felink.webviewapp.adpter.MenuAdapter;
 import com.felink.webviewapp.base.BaseActivity;
 import com.felink.webviewapp.base.BaseFragment;
+import com.felink.webviewapp.bean.LoginBean;
 import com.felink.webviewapp.bean.MainModuleBean;
 import com.felink.webviewapp.data.UrlData;
 import com.felink.webviewapp.fragment.MineFragment;
@@ -34,7 +35,15 @@ import com.felink.webviewapp.viewmodule.impl.MainModulePresenterImpl;
 import com.felink.webviewapp.viewmodule.impl.MenuItemPresenterImpl;
 import com.felink.webviewapp.viewmodule.inter.IMainModuleView;
 import com.felink.webviewapp.viewmodule.inter.IMenuView;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +64,16 @@ public class MainActivity extends BaseActivity implements IMainModuleView,IMenuV
     private BaseFragment mCurrentFragment;
     private List<MainModuleBean> moduleBeans;
     private long mExitTime;
+    private Socket mSocket;
+    private String userId;
+
+    {
+        try {
+            mSocket = IO.socket("https://www.vogerp.com:8090");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,8 +244,58 @@ public class MainActivity extends BaseActivity implements IMainModuleView,IMenuV
     }
 
     @Subscribe(threadMode = ThreadMode.BackgroundThread)
-    public void getMenuItems(com.felink.webviewapp.bean.MenuItem item) {
+    public void getMenuItems(LoginBean loginBean) {
+        userId = loginBean.userId;
         MenuItemPresenterImpl presenter = new MenuItemPresenterImpl(this);
+
+        mSocket.on("connect", connect);
+        mSocket.on("loginSuccess", loginSuccess);
+        mSocket.on("notifyFrom", notifyFrom);
+        mSocket.connect();
+
+    }
+
+
+
+    private Emitter.Listener connect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            mSocket.emit("register",getMsg());
+        }
+    };
+
+    private Emitter.Listener loginSuccess = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            mSocket.emit("notifihistory",getMsg());
+        }
+    };
+
+    private Emitter.Listener notifyFrom = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONArray data = (JSONArray) args[0];
+                    // add the message to view
+                    if (data != null && !TextUtils.isEmpty(data.toString())){
+                        Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+        }
+    };
+
+    private JSONObject getMsg(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("partyId",userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 
     @Override

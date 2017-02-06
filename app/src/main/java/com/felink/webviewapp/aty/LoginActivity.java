@@ -120,7 +120,6 @@ public class LoginActivity extends BaseActivity implements IVerificationCodeView
             Toast.makeText(this,R.string.login_error,Toast.LENGTH_SHORT).show();
         }else {
             EventBus.getDefault().post(loginBean);
-            EventBus.getDefault().post(new com.felink.webviewapp.bean.MenuItem());
             finish();
         }
     }
